@@ -1,5 +1,6 @@
 ---
 layout: post
+comments: true
 title:  "How to install Mesos and Spark for a cluster"
 date:   2016-02-11 16:22:20 -0500
 categories: notes

@@ -1,5 +1,6 @@
 ---
 layout: post
+comments: true
 title:  "How to upgrade Samsung Gear Live Watch"
 date:   2016-02-12 16:22:20 -0500
 categories: notes
