@@ -21,6 +21,7 @@ Very often, when we connect a new device to the developer machine, we might enco
 
 1. Connect the device to the machine via USB. 
 2. Check `lsusb` and find the entry related to the device. Look for keywords like `Samsung` or `Google`. One way to find out the usb info of the device is to disconnect and reconnect it and see the difference in the output. For example, here is a sample output without connecting: 
+
 ```bash
 $ lsusb
 Bus 002 Device 004: ID 148f:5370 Ralink Technology, Corp. RT5370 Wireless Adapter
@@ -34,7 +35,9 @@ Bus 003 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
 Bus 003 Device 002: ID 2516:0004  
 Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 ```
+
 And here is the output with the device connected: 
+
 ```bash
 $ lsusb
 Bus 002 Device 004: ID 148f:5370 Ralink Technology, Corp. RT5370 Wireless Adapter
@@ -49,26 +52,37 @@ Bus 003 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
 Bus 003 Device 002: ID 2516:0004  
 Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 ```
+
 Observe the difference:
+
 ```bash
 Bus 001 Device 020: ID 18d1:4ee7 Google Inc. 
 ```
+
 Now edit the udev file at
+
 ```bash
 $ sudo vi /etc/udev/rules.d/51-android.rules
 ```
+
 And add this line:
+
 ```bash
 # Samsung Gear Live
-SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", ATTR{idProduct}=="4ee7", MODE="0600", OWNER="spica"
+SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", ATTR{idProduct}=="4ee7", MODE="0600", OWNER="user1"
 ```
-where `spica` is my username. 
+
+where `user1` is my username. 
+
 Restart udev:
+
 ```bash
 $ sudo udevadm control --reload-rules
 $ sudo service udev restart
 ```
+
 Now we can find that the device can be properly recognized by `adb` (and a permission confirmation might prompt on the device).
+
 ```bash
 $ adb devices
 List of devices attached

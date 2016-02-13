@@ -15,4 +15,4 @@ url: "https://schfan.github.io/Notes/" # the base hostname & protocol for your s
 github_username:  schfan
 
 # Build settings
-markdown: kramdown
+markdown: redcarpet
