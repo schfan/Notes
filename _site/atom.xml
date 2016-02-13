@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+ <title>Notes</title>
+ <link href="https://schfan.github.io/Notes//Notes/atom.xml" rel="self"/>
+ <link href="https://schfan.github.io/Notes//Notes/"/>
+ <updated>2016-02-13T18:13:27-05:00</updated>
+ <id>https://schfan.github.io/Notes/</id>
+ <author>
+   <name></name>
+   <email></email>
+ </author>
+
+ 
+ <entry>
+   <title>How to upgrade Samsung Gear Live Watch</title>
+   <link href="https://schfan.github.io/Notes//notes/2016/02/12/how-to-upgrade-samsung-gear-live-watch.html"/>
+   <updated>2016-02-12T16:22:20-05:00</updated>
+   <id>https://schfan.github.io/Notes//Notes/notes/2016/02/12/how-to-upgrade-samsung-gear-live-watch</id>
+   <content type="html">&lt;p&gt;This post is about my journey on upgrading a Samsung Gear Live Watch purchased on Amazon. The OS was 5.0.1, and my goal was to upgrade its OS to Android 5.1.1. Perhaps because the onstock system image was a developer version, the default &lt;strong&gt;Update&lt;/strong&gt; button does not give me an update. I tried many times to install a customized system image, but &lt;code&gt;adb sideload filename.zip&lt;/code&gt; does not work (due to an &lt;code&gt;error:closed&lt;/code&gt; error), forbidding me to load any external file onto the watch to install. Fianlly, I used &lt;a href=&quot;http://forum.xda-developers.com/gear-live/development/utility-gear-live-watch-tool-t2846696&quot;&gt;Samsung Gear Live Restore Tool V2&lt;/a&gt; from xda and reversed to a system image that allows automatic system upgrade and then upgraded from there. Here are the steps. &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Search and download the restore tool. &lt;/li&gt;
+&lt;li&gt;Unzip, pre-process the files. Since the developer of this tool (a shell script called &lt;code&gt;2-Gear-Live-Tool-for-Linux-and-OSX.sh&lt;/code&gt;) used a Windows development environment, I had to use &lt;code&gt;dos2unix 2-Gear-Live-Tool-for-Linux-and-OSX.sh&lt;/code&gt; to convert the bash script file to a Unix-friendly one. Also, the script calls a few binaries which are included in the same zip file. For convenience, I just did &lt;code&gt;chmod +x *&lt;/code&gt; for everything in the folder so that the binaries will have execution permissions.&lt;/li&gt;
+&lt;li&gt;Bug. Due to some reason (perhaps dos2unix), one image file is mal-named in the script. Open the script and search for &lt;code&gt;78yrecovery&lt;/code&gt;, and change it to &lt;code&gt;78Yrecovery&lt;/code&gt;. &lt;/li&gt;
+&lt;li&gt;Boot the android watch into bootloader. This can be done either using &lt;code&gt;adb reboot bootloader&lt;/code&gt; (if the watch&amp;#39;s debugging interface is enabled) or reboot the device (by holding the power button) and &lt;em&gt;swipe twice&lt;/em&gt; from &lt;em&gt;top left&lt;/em&gt; to &lt;em&gt;bottom right&lt;/em&gt; when the Samsung logo shows up (tip: this is easier to do when the power cable is disconnected).&lt;/li&gt;
+&lt;li&gt;Execute the shell script, and type &lt;code&gt;restore&lt;/code&gt;.  Follow the instructions in the script. &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Only the V2 of the Restore Tool worked for me. After the restoration, the watch&amp;#39;s OS reversed to Android 4.4W. Select &lt;strong&gt;System Update&lt;/strong&gt; in the &lt;strong&gt;Settings&lt;/strong&gt; and download/upgrade the system. The watch will then update to Android 4.4W-2. Repeat the process, update the system to 5.0.1 and then 5.1.1. Voila! &lt;/p&gt;
+
+&lt;h3&gt;How to solve &lt;code&gt;adb devices no permission&lt;/code&gt; error&lt;/h3&gt;
+
+&lt;p&gt;Very often, when we connect a new device to the developer machine, we might encounter &lt;code&gt;no permission&lt;/code&gt; error when we do &lt;code&gt;adb devices&lt;/code&gt;, and even &lt;code&gt;adb kill-server&lt;/code&gt; might not help. If the device&amp;#39;s developer option is enabled, the error is most likely caused by the developer machine&amp;#39;s udev settings. Here is how I solved it. &lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Connect the device to the machine via USB. &lt;/li&gt;
+&lt;li&gt;Check &lt;code&gt;lsusb&lt;/code&gt; and find the entry related to the device. Look for keywords like &lt;code&gt;Samsung&lt;/code&gt; or &lt;code&gt;Google&lt;/code&gt;. One way to find out the usb info of the device is to disconnect and reconnect it and see the difference in the output. For example, here is a sample output without connecting: &lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;lsusb
+Bus 002 Device 004: ID 148f:5370 Ralink Technology, Corp. RT5370 Wireless Adapter
+Bus 002 Device 003: ID 046d:0825 Logitech, Inc. Webcam C270
+Bus 002 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
+Bus 003 Device 002: ID 2516:0004  
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And here is the output with the device connected: &lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;lsusb
+Bus 002 Device 004: ID 148f:5370 Ralink Technology, Corp. RT5370 Wireless Adapter
+Bus 002 Device 003: ID 046d:0825 Logitech, Inc. Webcam C270
+Bus 002 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 020: ID 18d1:4ee7 Google Inc. 
+Bus 001 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
+Bus 003 Device 002: ID 2516:0004  
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Observe the difference:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;Bus 001 Device 020: ID 18d1:4ee7 Google Inc. 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now edit the udev file at&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;sudo vi /etc/udev/rules.d/51-android.rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;And add this line:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# Samsung Gear Live&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;SUBSYSTEM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;usb&quot;&lt;/span&gt;, ATTR&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;idVendor&lt;span class=&quot;o&quot;&gt;}==&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;18d1&quot;&lt;/span&gt;, ATTR&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;idProduct&lt;span class=&quot;o&quot;&gt;}==&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;4ee7&quot;&lt;/span&gt;, &lt;span class=&quot;nv&quot;&gt;MODE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0600&quot;&lt;/span&gt;, &lt;span class=&quot;nv&quot;&gt;OWNER&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;user1&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;where &lt;code&gt;user1&lt;/code&gt; is my username. &lt;/p&gt;
+
+&lt;p&gt;Restart udev:&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;sudo udevadm control --reload-rules
+&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;sudo service udev restart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Now we can find that the device can be properly recognized by &lt;code&gt;adb&lt;/code&gt; (and a permission confirmation might prompt on the device).&lt;/p&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;gp&quot;&gt;$ &lt;/span&gt;adb devices
+List of devices attached
+R3AF600RD4Kdevice
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
+ </entry>
+ 
+ <entry>
+   <title>How to install Mesos and Spark for a cluster</title>
+   <link href="https://schfan.github.io/Notes//notes/2016/02/11/how-to-install-mesos-and-spark-for-a-cluster.html"/>
+   <updated>2016-02-11T16:22:20-05:00</updated>
+   <id>https://schfan.github.io/Notes//Notes/notes/2016/02/11/how-to-install-mesos-and-spark-for-a-cluster</id>
+   <content type="html">&lt;p&gt;This post is a tutorial on installing Mesos and Spark frameworks on a cluster of servers.&lt;/p&gt;
+
+&lt;h2&gt;1. Install Mesos &lt;a href=&quot;https://open.mesosphere.com/getting-started/install/&quot;&gt;[1]&lt;/a&gt;&lt;/h2&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Note: In this example we use &lt;code&gt;master.com&lt;/code&gt; as the IP address of the master server. Remember to replace it to your own master server IP address. The bash scripts here require you to have &lt;code&gt;sudo&lt;/code&gt; privilege for package installation and configuration. It is also assumed that hdfs is already setup in the cluster.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3&gt;1.1 Set up Master&lt;/h3&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# mesos_master_setup.sh&lt;/span&gt;
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E56151BF
+&lt;span class=&quot;nv&quot;&gt;DISTRO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;lsb_release -is | tr &lt;span class=&quot;s1&quot;&gt;&#39;[:upper:]&#39;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;[:lower:]&#39;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;CODENAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;lsb_release -cs&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;deb http://repos.mesosphere.com/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;DISTRO&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CODENAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; main&quot;&lt;/span&gt; | sudo tee /etc/apt/sources.list.d/mesosphere.list
+sudo apt-get -y update
+sudo apt-get -y install mesos marathon
+sudo sh -c &lt;span class=&quot;s2&quot;&gt;&quot;echo 1 &amp;gt; /etc/zookeeper/conf/myid&quot;&lt;/span&gt;
+sudo sh -c &lt;span class=&quot;s2&quot;&gt;&quot;echo server.1=master.com:2888:3888 &amp;gt;&amp;gt; /etc/zookeeper/conf/zoo.cfg&quot;&lt;/span&gt;
+sudo service zookeeper restart
+sudo sh -c &lt;span class=&quot;s2&quot;&gt;&quot;echo zk://master.com:2181/mesos &amp;gt; /etc/mesos/zk&quot;&lt;/span&gt;
+sudo service mesos-slave stop
+sudo sh -c &lt;span class=&quot;s2&quot;&gt;&quot;echo manual &amp;gt; /etc/init/mesos-slave.override&quot;&lt;/span&gt;
+sudo service mesos-master restart
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;1.2 Set up Slave(s)&lt;/h3&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# mesos_slave_setup.sh&lt;/span&gt;
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E56151BF
+&lt;span class=&quot;nv&quot;&gt;DISTRO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;lsb_release -is | tr &lt;span class=&quot;s1&quot;&gt;&#39;[:upper:]&#39;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&#39;[:lower:]&#39;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;CODENAME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;lsb_release -cs&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;deb http://repos.mesosphere.com/&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;DISTRO&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;CODENAME&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; main&quot;&lt;/span&gt; | sudo tee /etc/apt/sources.list.d/mesosphere.list
+sudo apt-get -y update
+sudo apt-get -y install mesos
+sudo service zookeeper stop
+sudo sh -c &lt;span class=&quot;s2&quot;&gt;&quot;echo manual &amp;gt; /etc/init/zookeeper.override&quot;&lt;/span&gt;
+sudo sh -c &lt;span class=&quot;s2&quot;&gt;&quot;echo zk://master.com:2181/mesos &amp;gt; /etc/mesos/zk&quot;&lt;/span&gt;
+sudo service mesos-master stop
+sudo sh -c &lt;span class=&quot;s2&quot;&gt;&quot;echo manual &amp;gt; /etc/init/mesos-master.override&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;1.3 Launch a slave&lt;/h3&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# mesos_slave_start.sh&lt;/span&gt;
+sudo rm -f /tmp/mesos/meta/slaves/latest
+sudo mesos-slave --master&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;master.com:5050 --hadoop_home&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;/usr/local/hadoop --hostname&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;$(&lt;/span&gt;hostname&lt;span class=&quot;k&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;At this point, you are able to view the Mesos Web UI at &lt;code&gt;master.com:5050&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2&gt;2. Install Spark on top of Mesos &lt;a href=&quot;https://spark.apache.org/docs/latest/running-on-mesos.html&quot;&gt;[2]&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3&gt;2.1 Configuration&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;This step can be done in any server inside the cluster. You might need to log in as the hadoop user in order to upload Spark binary files onto hdfs. &lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span class=&quot;c&quot;&gt;# mesos_spark_setup.sh&lt;/span&gt;
+su hduser1
+wget http://www.apache.org/dyn/closer.lua/spark/spark-1.6.0/spark-1.6.0-bin-hadoop2.6.tgz
+hadoop fs -put spark-1.6.0-bin-hadoop2.6.tgz / 
+tar xvf spark-1.6.0-bin-hadoop2.6.tgz
+&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;spark-1.6.0-bin-hadoop2.6
+hadoop fs -put ./lib/spark-examples-1.6.0-hadoop2.6.0.jar /
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;2.2 Launch Spark Dispatcher&lt;/h3&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;./sbin/start-mesos-dispatcher.sh --master mesos://zk://master.com:2181/mesos
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;2.3 Submit a Spark Job to Mesos&lt;/h3&gt;
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;./bin/spark-submit --class org.apache.spark.examples.SparkPi --master mesos://master.com:7078 --deploy-mode cluster  --supervise --executor-memory 20G --total-executor-cores 20 hdfs://master:54310/spark-examples-1.6.0-hadoop2.6.0.jar 50000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The specific port numbers might vary according to different system settings. If the job submission fails, check the error logs. Make sure that the firewalls do not block required ports. &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3&gt;2.4 Stop Spark Dispatcher&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;After your job finishes (which can be verified on the Web UI), you can stop the Spark job dispatcher.
+&lt;code&gt;bash
+./sbin/stop-mesos-dispatcher.sh
+&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+</content>
+ </entry>
+ 
+
+</feed>

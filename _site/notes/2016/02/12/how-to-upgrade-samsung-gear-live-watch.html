@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      How to upgrade Samsung Gear Live Watch &middot; Notes
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/Notes/public/css/poole.css">
+  <link rel="stylesheet" href="/Notes/public/css/syntax.css">
+  <link rel="stylesheet" href="/Notes/public/css/lanyon.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+
+  <!-- Icons -->
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/Notes/public/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/Notes/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-item">
+    <p>This site publishes some of my daily notes. 
+</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/Notes/">Home</a>
+
+    
+
+    
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+
+  </nav>
+
+  <div class="sidebar-item">
+    <p>
+      &copy; 2016. All rights reserved.
+    </p>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/Notes/" title="Home">Notes</a>
+            <small></small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <div class="post">
+  <h1 class="post-title">How to upgrade Samsung Gear Live Watch</h1>
+  <span class="post-date">12 Feb 2016</span>
+  <p>This post is about my journey on upgrading a Samsung Gear Live Watch purchased on Amazon. The OS was 5.0.1, and my goal was to upgrade its OS to Android 5.1.1. Perhaps because the onstock system image was a developer version, the default <strong>Update</strong> button does not give me an update. I tried many times to install a customized system image, but <code>adb sideload filename.zip</code> does not work (due to an <code>error:closed</code> error), forbidding me to load any external file onto the watch to install. Fianlly, I used <a href="http://forum.xda-developers.com/gear-live/development/utility-gear-live-watch-tool-t2846696">Samsung Gear Live Restore Tool V2</a> from xda and reversed to a system image that allows automatic system upgrade and then upgraded from there. Here are the steps. </p>
+
+<ol>
+<li>Search and download the restore tool. </li>
+<li>Unzip, pre-process the files. Since the developer of this tool (a shell script called <code>2-Gear-Live-Tool-for-Linux-and-OSX.sh</code>) used a Windows development environment, I had to use <code>dos2unix 2-Gear-Live-Tool-for-Linux-and-OSX.sh</code> to convert the bash script file to a Unix-friendly one. Also, the script calls a few binaries which are included in the same zip file. For convenience, I just did <code>chmod +x *</code> for everything in the folder so that the binaries will have execution permissions.</li>
+<li>Bug. Due to some reason (perhaps dos2unix), one image file is mal-named in the script. Open the script and search for <code>78yrecovery</code>, and change it to <code>78Yrecovery</code>. </li>
+<li>Boot the android watch into bootloader. This can be done either using <code>adb reboot bootloader</code> (if the watch&#39;s debugging interface is enabled) or reboot the device (by holding the power button) and <em>swipe twice</em> from <em>top left</em> to <em>bottom right</em> when the Samsung logo shows up (tip: this is easier to do when the power cable is disconnected).</li>
+<li>Execute the shell script, and type <code>restore</code>.  Follow the instructions in the script. </li>
+</ol>
+
+<p>Only the V2 of the Restore Tool worked for me. After the restoration, the watch&#39;s OS reversed to Android 4.4W. Select <strong>System Update</strong> in the <strong>Settings</strong> and download/upgrade the system. The watch will then update to Android 4.4W-2. Repeat the process, update the system to 5.0.1 and then 5.1.1. Voila! </p>
+
+<h3>How to solve <code>adb devices no permission</code> error</h3>
+
+<p>Very often, when we connect a new device to the developer machine, we might encounter <code>no permission</code> error when we do <code>adb devices</code>, and even <code>adb kill-server</code> might not help. If the device&#39;s developer option is enabled, the error is most likely caused by the developer machine&#39;s udev settings. Here is how I solved it. </p>
+
+<ol>
+<li>Connect the device to the machine via USB. </li>
+<li>Check <code>lsusb</code> and find the entry related to the device. Look for keywords like <code>Samsung</code> or <code>Google</code>. One way to find out the usb info of the device is to disconnect and reconnect it and see the difference in the output. For example, here is a sample output without connecting: </li>
+</ol>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>lsusb
+Bus 002 Device 004: ID 148f:5370 Ralink Technology, Corp. RT5370 Wireless Adapter
+Bus 002 Device 003: ID 046d:0825 Logitech, Inc. Webcam C270
+Bus 002 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
+Bus 003 Device 002: ID 2516:0004  
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+</code></pre></div>
+<p>And here is the output with the device connected: </p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>lsusb
+Bus 002 Device 004: ID 148f:5370 Ralink Technology, Corp. RT5370 Wireless Adapter
+Bus 002 Device 003: ID 046d:0825 Logitech, Inc. Webcam C270
+Bus 002 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 001 Device 020: ID 18d1:4ee7 Google Inc. 
+Bus 001 Device 002: ID 8087:0024 Intel Corp. Integrated Rate Matching Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 003: ID 046d:c52b Logitech, Inc. Unifying Receiver
+Bus 003 Device 002: ID 2516:0004  
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+</code></pre></div>
+<p>Observe the difference:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">Bus 001 Device 020: ID 18d1:4ee7 Google Inc. 
+</code></pre></div>
+<p>Now edit the udev file at</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>sudo vi /etc/udev/rules.d/51-android.rules
+</code></pre></div>
+<p>And add this line:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># Samsung Gear Live</span>
+<span class="nv">SUBSYSTEM</span><span class="o">==</span><span class="s2">"usb"</span>, ATTR<span class="o">{</span>idVendor<span class="o">}==</span><span class="s2">"18d1"</span>, ATTR<span class="o">{</span>idProduct<span class="o">}==</span><span class="s2">"4ee7"</span>, <span class="nv">MODE</span><span class="o">=</span><span class="s2">"0600"</span>, <span class="nv">OWNER</span><span class="o">=</span><span class="s2">"user1"</span>
+</code></pre></div>
+<p>where <code>user1</code> is my username. </p>
+
+<p>Restart udev:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>sudo udevadm control --reload-rules
+<span class="gp">$ </span>sudo service udev restart
+</code></pre></div>
+<p>Now we can find that the device can be properly recognized by <code>adb</code> (and a permission confirmation might prompt on the device).</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="gp">$ </span>adb devices
+List of devices attached
+R3AF600RD4Kdevice
+</code></pre></div>
+</div>
+
+<div class="related">
+  <h2>Related Posts</h2>
+  <ul class="related-posts">
+    
+      <li>
+        <h3>
+          <a href="/Notes/notes/2016/02/11/how-to-install-mesos-and-spark-for-a-cluster.html">
+            How to install Mesos and Spark for a cluster
+            <small>11 Feb 2016</small>
+          </a>
+        </h3>
+      </li>
+    
+  </ul>
+</div>
+
+        
+<!-- Add Disqus comments. -->
+<div id="disqus_thread"></div>
+<script>
+	/**
+	 *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+	 *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+	 */
+	/*
+	 var disqus_config = function () {
+		 this.page.url = /notes/2016/02/12/how-to-upgrade-samsung-gear-live-watch.html;  // Replace PAGE_URL with your page's canonical URL variable
+		 this.page.identifier = /notes/2016/02/12/how-to-upgrade-samsung-gear-live-watch; // Replace PAGE_IDENTIFIER with your page's unique identifier variable 
+ };
+ */
+	(function() {  // DON'T EDIT BELOW THIS LINE
+			var d = document, s = d.createElement('script');
+
+			s.src = '//spicae.disqus.com/embed.js';
+
+			s.setAttribute('data-timestamp', +new Date());
+			(d.head || d.body).appendChild(s);
+	})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+  </body>
+</html>
