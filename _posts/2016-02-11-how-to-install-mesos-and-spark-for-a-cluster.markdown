@@ -1,4 +1,10 @@
-# How to install Mesos and Spark for a cluster
+---
+layout: post
+title:  "How to install Mesos and Spark for a cluster"
+date:   2016-02-11 16:22:20 -0500
+categories: notes
+---
+This post is a tutorial on installing Mesos and Spark frameworks on a cluster of servers.
 
 ## 1. Install Mesos [[1]](https://open.mesosphere.com/getting-started/install/)
 

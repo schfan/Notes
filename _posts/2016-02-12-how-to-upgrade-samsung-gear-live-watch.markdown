@@ -1,4 +1,9 @@
-# How to upgrade Samsung Gear Live Watch 
+---
+layout: post
+title:  "How to upgrade Samsung Gear Live Watch"
+date:   2016-02-12 16:22:20 -0500
+categories: notes
+---
 
 This post is about my journey on upgrading a Samsung Gear Live Watch purchased on Amazon. The OS was 5.0.1, and my goal was to upgrade its OS to Android 5.1.1. Perhaps because the onstock system image was a developer version, the default **Update** button does not give me an update. I tried many times to install a customized system image, but `adb sideload filename.zip` does not work (due to an `error:closed` error), forbidding me to load any external file onto the watch to install. Fianlly, I used [Samsung Gear Live Restore Tool V2](http://forum.xda-developers.com/gear-live/development/utility-gear-live-watch-tool-t2846696) from xda and reversed to a system image that allows automatic system upgrade and then upgraded from there. Here are the steps. 
 
