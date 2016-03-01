@@ -50,6 +50,7 @@ sed -i 's/m/:/g' batterylog.txt
 sed -i 's/s/./g' batterylog.txt
 ```
 
+
 2. Using R to continue processing and plot. 
 
 ```r
