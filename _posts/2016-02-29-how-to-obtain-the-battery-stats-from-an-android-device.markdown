@@ -34,6 +34,7 @@ Thus far, the data collection part has finished.
 Here are some of my scripts that process the battery stats. They are not very stable, so you might want to check the output at each step and make sure the processing was correct. 
 
 1. Obtain only battery info. 
+
 ```bash
 # getBatteryInfo.sh
 grep '         ' batterystats.txt > batterylog.txt
@@ -50,6 +51,7 @@ sed -i 's/s/./g' batterylog.txt
 ```
 
 2. Using R to continue processing and plot. 
+
 ```r
 # plot.R
 library(gdata)
@@ -80,9 +82,5 @@ capacity=current*voltage*duration #joule
 rate=as.numeric(model1$coefficients[2])
 power=-capacity*rate
 power=round(power,4)
-
-legend("topright", title=paste("Power: ", power*1000, "mW",sep=''),c("Raw", "Estimate"),
-       lty=c(1,1), col=c('black', 'red'))
+print(power)
 ```
-
-For example, ![Alt text](./power_accel.png)

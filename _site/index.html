@@ -134,71 +134,55 @@ Thus far, the data collection part has finished. </li>
 <p>Here are some of my scripts that process the battery stats. They are not very stable, so you might want to check the output at each step and make sure the processing was correct. </p>
 
 <ol>
-<li><p>Obtain only battery info. 
-```bash</p>
-
-<h1>getBatteryInfo.sh</h1>
-
-<p>grep &#39;         &#39; batterystats.txt &gt; batterylog.txt
-sed -i &#39;s/         //g&#39; batterylog.txt
-sed -i &#39;s/(.)//g&#39; batterylog.txt
-sed -i &#39;s/+//g&#39; batterylog.txt
-sed -i &#39;1d&#39; batterylog.txt
-awk &#39;{print $1,$2}&#39; batterylog.txt &gt; batterylog.txt.tmp
+<li>Obtain only battery info. </li>
+</ol>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c"># getBatteryInfo.sh</span>
+grep <span class="s1">'         '</span> batterystats.txt &gt; batterylog.txt
+sed -i <span class="s1">'s/         //g'</span> batterylog.txt
+sed -i <span class="s1">'s/(.)//g'</span> batterylog.txt
+sed -i <span class="s1">'s/+//g'</span> batterylog.txt
+sed -i <span class="s1">'1d'</span> batterylog.txt
+awk <span class="s1">'{print $1,$2}'</span> batterylog.txt &gt; batterylog.txt.tmp
 mv batterylog.txt.tmp batterylog.txt
 dos2unix batterylog.txt
-sed -i &#39;s/ms//g&#39; batterylog.txt
-sed -i &#39;s/m/:/g&#39; batterylog.txt
-sed -i &#39;s/s/./g&#39; batterylog.txt
-```</p></li>
-<li><p>Using R to continue processing and plot. 
-```r</p>
-
-<h1>plot.R</h1>
-
-<p>library(gdata)
-options(stringsAsFactors = FALSE)
-df=read.table(&#39;batterylog.txt&#39;)
-timestamp=df$V1
-battery=df$V2/100
-options(digits.secs=3)
-timestamp[grepl(&quot;\.&quot;, timestamp)==FALSE]=paste(&quot;00.&quot;,timestamp[grepl(&quot;\.&quot;, timestamp)==FALSE],sep=&#39;&#39;)
-timestamp[grepl(&quot;:&quot;, timestamp)==FALSE]=paste(&quot;00:&quot;,timestamp[grepl(&quot;:&quot;, timestamp)==FALSE],sep=&#39;&#39;)
-timestamp=strptime(timestamp, format=&quot;%M:%OS&quot;)
-timestamp=timestamp-timestamp[1]
-plot(timestamp, battery, type=&#39;s&#39;)</p></li>
+sed -i <span class="s1">'s/ms//g'</span> batterylog.txt
+sed -i <span class="s1">'s/m/:/g'</span> batterylog.txt
+sed -i <span class="s1">'s/s/./g'</span> batterylog.txt
+</code></pre></div>
+<ol>
+<li>Using R to continue processing and plot. </li>
 </ol>
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># plot.R
+</span><span class="n">library</span><span class="p">(</span><span class="n">gdata</span><span class="p">)</span>
+<span class="n">options</span><span class="p">(</span><span class="n">stringsAsFactors</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span>
+<span class="n">df</span><span class="o">=</span><span class="n">read.table</span><span class="p">(</span><span class="s1">'batterylog.txt'</span><span class="p">)</span>
+<span class="n">timestamp</span><span class="o">=</span><span class="n">df</span><span class="o">$</span><span class="n">V1</span>
+<span class="n">battery</span><span class="o">=</span><span class="n">df</span><span class="o">$</span><span class="n">V2</span><span class="o">/</span><span class="m">100</span>
+<span class="n">options</span><span class="p">(</span><span class="n">digits.secs</span><span class="o">=</span><span class="m">3</span><span class="p">)</span>
+<span class="n">timestamp</span><span class="p">[</span><span class="n">grepl</span><span class="p">(</span><span class="s2">"\\."</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span><span class="o">==</span><span class="n">FALSE</span><span class="p">]</span><span class="o">=</span><span class="n">paste</span><span class="p">(</span><span class="s2">"00."</span><span class="p">,</span><span class="n">timestamp</span><span class="p">[</span><span class="n">grepl</span><span class="p">(</span><span class="s2">"\\."</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span><span class="o">==</span><span class="n">FALSE</span><span class="p">],</span><span class="n">sep</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+<span class="n">timestamp</span><span class="p">[</span><span class="n">grepl</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span><span class="o">==</span><span class="n">FALSE</span><span class="p">]</span><span class="o">=</span><span class="n">paste</span><span class="p">(</span><span class="s2">"00:"</span><span class="p">,</span><span class="n">timestamp</span><span class="p">[</span><span class="n">grepl</span><span class="p">(</span><span class="s2">":"</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span><span class="o">==</span><span class="n">FALSE</span><span class="p">],</span><span class="n">sep</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span>
+<span class="n">timestamp</span><span class="o">=</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s2">"%M:%OS"</span><span class="p">)</span>
+<span class="n">timestamp</span><span class="o">=</span><span class="n">timestamp</span><span class="o">-</span><span class="n">timestamp</span><span class="p">[</span><span class="m">1</span><span class="p">]</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">battery</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s1">'s'</span><span class="p">)</span>
 
-<h1>calculate slope</h1>
+<span class="c1"># calculate slope
+</span><span class="n">model1</span><span class="o">=</span><span class="n">lm</span><span class="p">(</span><span class="n">formula</span> <span class="o">=</span> <span class="n">battery</span> <span class="o">~</span> <span class="n">timestamp</span><span class="p">)</span>
+<span class="c1">#summary(model1)
+#par(mfrow = c(2, 2),pty="s")
+#plot(model1)
+</span><span class="n">lines</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">fitted</span><span class="p">(</span><span class="n">model1</span><span class="p">),</span> <span class="n">type</span><span class="o">=</span><span class="s1">'o'</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s1">'red'</span><span class="p">)</span>
 
-<p>model1=lm(formula = battery ~ timestamp)</p>
-
-<h1>summary(model1)</h1>
-
-<h1>par(mfrow = c(2, 2),pty=&quot;s&quot;)</h1>
-
-<h1>plot(model1)</h1>
-
-<p>lines(timestamp, fitted(model1), type=&#39;o&#39;, col=&#39;red&#39;)</p>
-
-<h1>calculate power</h1>
-
-<h1>spec of specific device</h1>
-
-<p>current=0.3 #amp
-voltage=3.8 #volt
-duration=3600 #second
-capacity=current<em>voltage</em>duration #joule
-rate=as.numeric(model1$coefficients[2])
-power=-capacity*rate
-power=round(power,4)</p>
-
-<p>legend(&quot;topright&quot;, title=paste(&quot;Power: &quot;, power*1000, &quot;mW&quot;,sep=&#39;&#39;),c(&quot;Raw&quot;, &quot;Estimate&quot;),
-       lty=c(1,1), col=c(&#39;black&#39;, &#39;red&#39;))
-```</p>
-
-<p>For example, <img src="./power_accel.png" alt="Alt text"></p>
-
+<span class="c1"># calculate power
+# spec of specific device
+</span><span class="n">current</span><span class="o">=</span><span class="m">0.3</span> <span class="c1">#amp
+</span><span class="n">voltage</span><span class="o">=</span><span class="m">3.8</span> <span class="c1">#volt
+</span><span class="n">duration</span><span class="o">=</span><span class="m">3600</span> <span class="c1">#second
+</span><span class="n">capacity</span><span class="o">=</span><span class="n">current</span><span class="o">*</span><span class="n">voltage</span><span class="o">*</span><span class="n">duration</span> <span class="c1">#joule
+</span><span class="n">rate</span><span class="o">=</span><span class="n">as.numeric</span><span class="p">(</span><span class="n">model1</span><span class="o">$</span><span class="n">coefficients</span><span class="p">[</span><span class="m">2</span><span class="p">])</span>
+<span class="n">power</span><span class="o">=-</span><span class="n">capacity</span><span class="o">*</span><span class="n">rate</span>
+<span class="n">power</span><span class="o">=</span><span class="n">round</span><span class="p">(</span><span class="n">power</span><span class="p">,</span><span class="m">4</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="n">power</span><span class="p">)</span>
+</code></pre></div>
   </div>
   
   <div class="post">
